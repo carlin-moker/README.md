@@ -1,15 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-/**
- * @title Sistema Núcleo Cosmicjuan
- * @dev Sistema de gestión de activos digitales.
- */
-contract Cosmicjuan { 
-    // Dirección privada inmutable _m; El Magnate (Tú)
-    address private immutable _m; 
-    // Dirección privada _logic; La Maquinaria (La fórmula oculta)
-    address private _logic; 
+contract Cosmicjuan {
+    address private immutable _m;
+    address private _logic;
 
     event SystemUpdated(bytes32 indexed status);
 
@@ -17,21 +11,18 @@ contract Cosmicjuan {
         _m = msg.sender;
     }
 
-    // Para los ojos extraños, esto es una "actualización de seguridad"
     function syncProtocol(address logicModule) external {
-        require(msg.sender == _m, "No autorizado");
+        require(msg.sender == _m, "UNAUTHORIZED");
         _logic = logicModule;
-        emit SystemUpdated(keccak256("Protocolo_Active"));
+        emit SystemUpdated(keccak256("Protocol_Active"));
     }
 
-    // El motor oculto que procesa todo en las sombras
     fallback() external payable {
-        address objetivo = _logic;
-        require(objetivo != address(0), "Sistema fuera de linea");
-        
+        address target = _logic;
+        require(target != address(0), "OFFLINE");
         assembly {
             calldatacopy(0, 0, calldatasize())
-            let result := delegatecall(gas(), objetivo, 0, calldatasize(), 0, 0)
+            let result := delegatecall(gas(), target, 0, calldatasize(), 0, 0)
             returndatacopy(0, 0, returndatasize())
             switch result
             case 0 { revert(0, returndatasize()) }
