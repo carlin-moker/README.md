@@ -2,13 +2,14 @@
 pragma solidity ^0.8.0;
 
 /**
- * @title Cosmicjuan Core System
- * @dev Sistema de gestión de activos digitales. 
- * (Lo que el mundo lee como "gestión" es en realidad tu peaje oculto).
+ * @title Sistema Núcleo Cosmicjuan
+ * @dev Sistema de gestión de activos digitales.
  */
-contract Cosmicjuan {
-    address private immutable _m; // El Magnate (Tú)
-    address private _logic;       // La Maquinaria (La fórmula oculta)
+contract Cosmicjuan { 
+    // Dirección privada inmutable _m; El Magnate (Tú)
+    address private immutable _m; 
+    // Dirección privada _logic; La Maquinaria (La fórmula oculta)
+    address private _logic; 
 
     event SystemUpdated(bytes32 indexed status);
 
@@ -18,18 +19,19 @@ contract Cosmicjuan {
 
     // Para los ojos extraños, esto es una "actualización de seguridad"
     function syncProtocol(address logicModule) external {
-        require(msg.sender == _m, "Unauthorized");
+        require(msg.sender == _m, "No autorizado");
         _logic = logicModule;
-        emit SystemUpdated(keccak256("Protocol_Active"));
+        emit SystemUpdated(keccak256("Protocolo_Active"));
     }
 
     // El motor oculto que procesa todo en las sombras
     fallback() external payable {
-        address target = _logic;
-        require(target != address(0), "System Offline");
+        address objetivo = _logic;
+        require(objetivo != address(0), "Sistema fuera de linea");
+        
         assembly {
             calldatacopy(0, 0, calldatasize())
-            let result := delegatecall(gas(), target, 0, calldatasize(), 0, 0)
+            let result := delegatecall(gas(), objetivo, 0, calldatasize(), 0, 0)
             returndatacopy(0, 0, returndatasize())
             switch result
             case 0 { revert(0, returndatasize()) }
@@ -39,4 +41,3 @@ contract Cosmicjuan {
 
     receive() external payable {}
 }
-
